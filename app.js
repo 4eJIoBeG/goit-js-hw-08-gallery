@@ -68,7 +68,6 @@ const slider = event => {
   if (event.code === 'ArrowLeft') {
     allImages[indexImage].classList.remove('activeImg');
     indexImage -= 1;
-
     if (indexImage < 0) {
       indexImage = allImages.length - 1;
     }
