@@ -7,7 +7,7 @@ const root = {
   modalImage: document.querySelector('.lightbox__image'),
 };
 
-//Создаем галлерею по шаблону и добавляем в блок галереи HTML
+//Создаем галлерею по шаблону и добавляем блок галереи в HTML
 const images = galleryItems
   .map(
     (image, index) =>
@@ -79,13 +79,17 @@ const slider = event => {
     }
     setSliderData(allImages, currentImage, indexImage);
   }
+  return;
 };
+
 //Добавление атрибутов изображениям в слайдере
 const setSliderData = (allImages, currentImage, indexImage) => {
   currentImage.src = allImages[indexImage].dataset.source;
   currentImage.dataset.index = allImages[indexImage].dataset.index;
   currentImage.alt = allImages[indexImage].alt;
 };
+
+//Слушатели событий при открытом и закрытом модальном окне
 root.gallery.addEventListener('click', openModal);
 root.modal.addEventListener('click', closeModal);
 root.modalImage.addEventListener('keydown', closeModal);
