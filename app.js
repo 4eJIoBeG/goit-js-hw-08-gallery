@@ -35,7 +35,6 @@ const openModal = event => {
     root.modal.classList.add('is-open');
     root.modalImage.src = event.target.dataset.source;
     root.modalImage.alt = event.target.alt;
-    root.modalImage.classList.add('activeImg');
     root.modalImage.dataset.index = event.target.dataset.index;
   }
   return;
@@ -66,7 +65,6 @@ const slider = event => {
   let indexImage = Number(root.modalImage.dataset.index);
 
   if (event.code === 'ArrowLeft') {
-    allImages[indexImage].classList.remove('activeImg');
     indexImage -= 1;
     if (indexImage < 0) {
       indexImage = allImages.length - 1;
@@ -75,7 +73,6 @@ const slider = event => {
   }
 
   if (event.code === 'ArrowRight') {
-    allImages[indexImage].classList.remove('activeImg');
     indexImage += 1;
     if (indexImage >= allImages.length) {
       indexImage = 0;
@@ -85,7 +82,6 @@ const slider = event => {
 };
 //Добавление атрибутов изображениям в слайдере
 const setSliderData = (allImages, currentImage, indexImage) => {
-  allImages[indexImage].classList.add('activeImg');
   currentImage.src = allImages[indexImage].dataset.source;
   currentImage.dataset.index = allImages[indexImage].dataset.index;
   currentImage.alt = allImages[indexImage].alt;
