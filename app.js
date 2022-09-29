@@ -3,44 +3,45 @@ import galleryItems from './gallery-items.js';
 const root = {
   gallery: document.querySelector('.js-gallery'),
   modal: document.querySelector('.js-lightbox'),
+  modalOverlay: document.querySelector('.lightbox__overlay'),
   modalImage: document.querySelector('.lightbox__image'),
 };
 
-//Create Gallery
-const createGallery = () => {
-  const images = galleryItems
-    .map(
-      image =>
-        `<li class="gallery__item">
+//Создаем галлерею по шаблону и добавляем в блок галереи HTML
+const images = galleryItems
+  .map(
+    (image, index) =>
+      `<li class="gallery__item">
         <a class="gallery__link" href="${image.original}">
           <img
             class="gallery__image"
             src="${image.preview}"
             data-source="${image.original}"
+            data-index="${index}"
             alt="${image.description}"
           />
         </a>
       </li>`,
-    )
-    .join('');
+  )
+  .join('');
+root.gallery.insertAdjacentHTML('afterbegin', images);
 
-  root.gallery.insertAdjacentHTML('afterbegin', images);
-};
-
-createGallery();
-
-//Open modal
+//При открытии модального окна
 const openModal = event => {
   event.preventDefault();
+  window.addEventListener('keydown', slider);
   window.addEventListener('keydown', closeModal);
   if (event.target.nodeName === 'IMG') {
     root.modal.classList.add('is-open');
     root.modalImage.src = event.target.dataset.source;
     root.modalImage.alt = event.target.alt;
+    root.modalImage.classList.add('activeImg');
+    root.modalImage.dataset.index = event.target.dataset.index;
   }
   return;
 };
-//Close modal
+
+//При закрытии модального окна
 const closeModal = event => {
   if (
     event.target.dataset.action === 'close-lightbox' ||
@@ -49,12 +50,47 @@ const closeModal = event => {
   ) {
     root.modalImage.src = '';
     root.modalImage.alt = '';
+    root.modalImage.classList.add('activeImg');
+    root.modalImage.dataset.index = '';
     root.modal.classList.remove('is-open');
     window.removeEventListener('keydown', closeModal);
+    window.removeEventListener('keydown', slider);
   }
   return;
 };
 
-root.modal.addEventListener('click', closeModal);
+//Прокрутка галлерии стрелками
+const slider = event => {
+  const currentImage = document.querySelector('.lightbox__content > img');
+  const allImages = document.querySelectorAll('ul img');
+  let indexImage = Number(root.modalImage.dataset.index);
+
+  if (event.code === 'ArrowLeft') {
+    allImages[indexImage].classList.remove('activeImg');
+    indexImage -= 1;
+
+    if (indexImage < 0) {
+      indexImage = allImages.length - 1;
+    }
+    setSliderData(allImages, currentImage, indexImage);
+  }
+
+  if (event.code === 'ArrowRight') {
+    allImages[indexImage].classList.remove('activeImg');
+    indexImage += 1;
+    if (indexImage >= allImages.length) {
+      indexImage = 0;
+    }
+    setSliderData(allImages, currentImage, indexImage);
+  }
+};
+//Добавление атрибутов изображениям в слайдере
+const setSliderData = (allImages, currentImage, indexImage) => {
+  allImages[indexImage].classList.add('activeImg');
+  currentImage.src = allImages[indexImage].dataset.source;
+  currentImage.dataset.index = allImages[indexImage].dataset.index;
+  currentImage.alt = allImages[indexImage].alt;
+};
 root.gallery.addEventListener('click', openModal);
+root.modal.addEventListener('click', closeModal);
 root.modalImage.addEventListener('keydown', closeModal);
